@@ -1,0 +1,166 @@
+\documentclass{article}
+
+\usepackage{listings}
+\usepackage{graphicx}
+\usepackage{amsmath}
+
+\begin{document}
+
+\section{Question 1}
+
+We are given a network of nodes with edges $E = \{ oa, ob, oc, ab, ad, cd,
+be, dn, ed \}$, with maximum flow rates $c_e \forall e \in E$. We want
+to determine the direction and magnitude of the flow demanded of each
+edge such that the flow between $o$ and $n$ is maximized.
+
+The variables are the flow demanded of each edge, $f_e$ such that
+$|f_e| \le c_e$. However, to conveniently cast this as in our
+optimization framework (which expects configuration vectors to be
+positive semidefinite (PSD)), we can rewrite this as $f'_e = f_e + c_e$ such
+that $0 \le f'_e \le 2 c_e$.
+
+We demand that the net flow in to each node is zero,
+
+\begin{align*}
+  f_{oa} - f_{ab} - f_{ad} = 0 \tag{node $a$} \\
+  f_{ob} + f_{ab} - f_{be} = 0 \tag{node $b$} \\
+  f_{oc} - f_{cd} - f_{ce} = 0 \tag{node $c$} \\
+  f_{ad} + f_{cd} - f_{dn} = 0 \tag{node $d$} \\
+  f_{be} + f_{ce} - f_{en} = 0 \tag{node $e$} \\
+\end{align*}
+
+Which we can then rewrite in terms of $f'$,
+
+\begin{align*}
+  f'_{oa} - f'_{ab} - f'_{ad} = 1  \tag{node $a$} \\
+  f'_{ob} + f'_{ab} - f'_{be} = -1 \tag{node $b$} \\
+  f'_{oc} - f'_{cd} - f'_{ce} = -7 \tag{node $c$} \\
+  f'_{ad} + f'_{cd} - f'_{dn} = 1  \tag{node $d$} \\
+  f'_{be} + f'_{ce} - f'_{en} = 6  \tag{node $e$} \\
+\end{align*}
+
+Which is of form $A \vec f' = b$ where $A$ is read off of the
+left-hand side and $b$ from the right.
+
+Since we demand that the net flow in each node (other than $o$ and
+$n$) is zero, we know that the net flow into $n$ is precisely equal to
+the net flow out of $o$. Consequently, we can take either of these net
+flows to be our objective function,
+
+\begin{align*}
+  F(\vec f) & = f_{dn} + f_{en} = f_{oa} + f_{ob} + f_{oc} \\
+            & = f'_{dn} + f'_{en} + \mathrm{const} \\
+            & = f'_{oa} + f_{ob} + f_{oc} + \mathrm{const} \\
+\end{align*}
+
+Again, this is in the form of $c^T x$ (up to constants which
+can be ignored in the optimization problem).
+
+After solving our optimization problem,
+
+\[ \mathrm{min}_{\vec f'} ~ c \vec f' ~ \mathrm{s.t.} ~ A \vec f', \vec f' \ge 0 \]
+
+We can extract our flows $f_e = f'_e - c_e$.
+
+\section{Question 2}
+
+We define the configuration space of this problem to consist of the
+following variables,
+
+\begin{itemize}
+  \item $x_{ij}$, the quantity each raw component $i$ used to produce blend $j$
+
+  \item $y_i$, the quantity of each raw component $i$ to buy
+
+  \item $z_j$, the quantity of each blend $j$ to produce and sell
+\end{itemize}
+%
+We denote the quantities given in the problem description with the following,
+
+\begin{itemize}
+\item $b_i$, the quantity of raw component $i$ available for purchase
+\item $d_j$, the maximum demand of blend $j$
+\item $p_i$, the purchase price of raw component $i$
+\item $p'_j$, the selling price of blend $j$
+\item $e_i$, the selling price of excess of raw component $i$
+\item $o_i$, the octane content of raw component $i$
+\item $r_j$, the minimum octane content of blend $j$
+\end{itemize}
+
+We note that the amount of raw components $x_{ij}$ used to produce a
+blend is related to the amount of the blend produced (under an
+assumption of volume conservation),
+
+\[ \sum_i x_{ij} = z_j \tag{C1} \]
+
+The constraint on the availability of raw component $i$ can be written
+as,
+\[ \sum_j x_{ij} \le b_i \]
+This inequality can be recast as an equality through the introduction
+of a slack variable $\alpha > 0$,
+\[ \sum_j x_{ij} + \alpha_i = b_i \tag{C2} \]
+
+Likewise, the constraint on the demand for blend $j$ is written as,
+\[ z_j = \sum_i x_{ij} \le d_j \]
+which after introduction of the slack variable $\beta_j$ yields,
+\[ \sum_i x_{ij} + \beta_j = d_j \tag{C3} \]
+
+Lastly, we must ensure that each blend $j$ meets its minimum octane requirement,
+\[ \sum_i o_i x_{ij} \ge r_j z_j \]
+or equivalently,
+\[ \sum_i o_i x_{ij} - r_j z_j - \gamma_j = 0 \tag{C4} \]
+
+Our objective function can be formed from three distinct contributions.
+The cost of purchasing the raw components is given by,
+\[ F_1 = \sum_i p_i y_i \]
+The revenue from selling the blended products is given by,
+\[ F_2 = \sum_j p'_j z_j \]
+The revenue from selling the excess raw components is given by,
+\[ F_3 = \sum_i e_i \left(y_i - \sum_j x_{ij}\right) \]
+The objective (profit) to be maximized is then given by,
+\[ F = F_2 + F_3 - F_1 \tag{Obj} \]
+
+We note that our optimization space now consists of vectors formed from
+$(\vec x, \vec y, \vec z, \vec\alpha, \vec\beta, \vec\gamma) \ge 0$.
+
+\section{Question 3}
+
+We will need two projection methods:
+
+\begin{enumerate}
+\item A projection from a partially specified matrix symmetric matrix $M$
+  to a PSD matrix $X \in S_+^n$.
+\item A projection from a PSD matrix $X \in S_+^n$ to the set of
+  completions of $M$.
+\end{enumerate}
+
+In both cases we will minimize the nuclear norm,
+\[ \Vert X \Vert = \Vert V \Lambda V^T \Vert = \sum_i \sigma_i \]
+where the singular value $\sigma_i = \vert \lambda_i \vert$.
+
+For (a), we recognize that the symmetric matrix $X$ can be represented
+in the eigenbasis of $M$, $X = V \Omega V^T$. However, $M$ may have
+negative eigenvalues, which we must eliminate in order for $X$ to be
+PSD. We recognize that in these cases $\Vert X \Vert$ is minimized by
+letting $\omega_i = 0$ for all $\lambda_i < 0$. Therefore we have,
+
+For (b), we speculate that the minimal norm projection from $X$ to a
+valid completion $M$ is $X$ with the observed entries placed.
+
+\begin{figure}
+\lstinputlisting[language=Python]{q3.py}
+\caption{Implementation of method of alternating projections in Python.}
+\end{figure}
+
+\begin{figure}
+  \center
+  \includegraphics[scale=0.5]{q3-convergence.pdf}
+  \caption{Convergence of method of alternating projections on 100x100
+  symmetric matrix with 10 observed elements}
+\end{figure}
+
+\section{Question 4}
+
+\section{Question 5}
+
+\end{document}
