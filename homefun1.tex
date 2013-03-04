@@ -48,17 +48,17 @@ the net flow out of $o$. Consequently, we can take either of these net
 flows to be our objective function,
 
 \begin{align*}
-  F(\vec f) & = f_{dn} + f_{en} = f_{oa} + f_{ob} + f_{oc} \\
+  F(\vec f) & = f_{dn} + f_{en} = - f_{oa} - f_{ob} - f_{oc} \\
             & = f'_{dn} + f'_{en} + \mathrm{const} \\
-            & = f'_{oa} + f_{ob} + f_{oc} + \mathrm{const} \\
+            & = - f'_{oa} - f_{ob} - f_{oc} + \mathrm{const} \\
 \end{align*}
 
-Again, this is in the form of $c^T x$ (up to constants which
+Again, this is in the form of $c^T \vec f'$ (up to constants which
 can be ignored in the optimization problem).
 
 After solving our optimization problem,
 
-\[ \mathrm{min}_{\vec f'} ~ c \vec f' ~ \mathrm{s.t.} ~ A \vec f', \vec f' \ge 0 \]
+\[ \mathrm{min}_{\vec f'} ~ c^T \vec f' ~ \mathrm{s.t.} ~ A \vec f', \vec f' \ge 0 \]
 
 We can extract our flows $f_e = f'_e - c_e$.
 
@@ -163,24 +163,44 @@ For (a), we recognize that the symmetric matrix $X$ can be represented
 in the eigenbasis of $M$, $X = V \Omega V^T$. However, $M$ may have
 negative eigenvalues, which we must eliminate in order for $X$ to be
 PSD. We recognize that in these cases $\Vert X \Vert$ is minimized by
-letting $\omega_i = 0$ for all $\lambda_i < 0$. Therefore we have,
+letting $\omega_i = 0$ for all negative eigenvalues $\lambda_i <
+0$.
 
 For (b), we speculate that the minimal norm projection from $X$ to a
 valid completion $M$ is $X$ with the observed entries placed.
 
+This has been implemented in Python (see Figure
+\ref{Fig:AltProj}). Convergence characteristics for a small,
+underdetermined system is shown in Figure \ref{Fig:AltProjConv}.
+
 \begin{figure}
-\lstinputlisting[language=Python]{q3.py}
-\caption{Implementation of method of alternating projections in Python.}
+  \lstinputlisting[language=Python]{q3.py}
+  \caption{(Question 3) Implementation of method of alternating projections in Python.}
+  \label{Fig:AltProj}
 \end{figure}
 
 \begin{figure}
   \center
   \includegraphics[scale=0.5]{q3-convergence.pdf}
-  \caption{Convergence of method of alternating projections on 100x100
+  \caption{(Question 3) Convergence of method of alternating projections on 100x100
   symmetric matrix with 10 observed elements}
+  \label{Fig:AltProjConv}
 \end{figure}
 
 \section{Question 4}
+
+\begin{figure}
+  \lstinputlisting[language=Python]{q4.py}
+  \caption{(Question 4) Implementation of three linear optimization methods in Python.}
+  \label{Fig:Q4}
+\end{figure}
+
+\begin{figure}
+  \center
+  \includegraphics[scale=0.5]{q4-convergence.pdf}
+  \caption{(Question 4) Convergence of methods on 10 equation, 10 variable linear system}
+  \label{Fig:Q4Convergence}
+\end{figure}
 
 \section{Question 5}
 
