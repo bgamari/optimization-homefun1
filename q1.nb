@@ -1,0 +1,112 @@
+(* Content-type: application/vnd.wolfram.mathematica *)
+
+(*** Wolfram Notebook File ***)
+(* http://www.wolfram.com/nb *)
+
+(* CreatedBy='Mathematica 8.0' *)
+
+(*CacheID: 234*)
+(* Internal cache information:
+NotebookFileLineBreakTest
+NotebookFileLineBreakTest
+NotebookDataPosition[       157,          7]
+NotebookDataLength[      3591,        102]
+NotebookOptionsPosition[      3184,         84]
+NotebookOutlinePosition[      3620,        101]
+CellTagsIndexPosition[      3577,         98]
+WindowFrame->Normal*)
+
+(* Beginning of Notebook Content *)
+Notebook[{
+
+Cell[CellGroupData[{
+Cell[BoxData[
+ RowBox[{"Minimize", "[", 
+  RowBox[{
+   RowBox[{"{", "\[IndentingNewLine]", 
+    RowBox[{
+     RowBox[{"fdn", "+", "fen"}], ",", "\[IndentingNewLine]", 
+     RowBox[{
+      RowBox[{
+       RowBox[{"foa", "-", "fab", "-", "fad"}], "\[Equal]", "1"}], 
+      "\[IndentingNewLine]", "&&", 
+      RowBox[{
+       RowBox[{"fob", "+", "fab", "-", "fbe"}], "\[Equal]", 
+       RowBox[{"-", "1"}]}], "\[IndentingNewLine]", "&&", 
+      RowBox[{
+       RowBox[{"foc", "-", "fcd", "-", "fce"}], "\[Equal]", 
+       RowBox[{"-", "7"}]}], "\[IndentingNewLine]", "&&", 
+      RowBox[{
+       RowBox[{"fad", "+", "fcd", "-", "fdn"}], "\[Equal]", "1"}], 
+      "\[IndentingNewLine]", "&&", 
+      RowBox[{
+       RowBox[{"fbe", "+", "fce", "-", "fen"}], "\[Equal]", "6"}], 
+      "\[IndentingNewLine]", "&&", 
+      RowBox[{"foa", "\[GreaterEqual]", "0"}], "&&", 
+      RowBox[{"fob", "\[GreaterEqual]", "0"}], "&&", 
+      RowBox[{"foc", "\[GreaterEqual]", "0"}], "\[IndentingNewLine]", "&&", 
+      RowBox[{"fab", "\[GreaterEqual]", "0"}], "&&", 
+      RowBox[{"fad", "\[GreaterEqual]", "0"}], "&&", 
+      RowBox[{"fcd", "\[GreaterEqual]", "0"}], "\[IndentingNewLine]", "&&", 
+      RowBox[{"fbe", "\[GreaterEqual]", "0"}], "&&", 
+      RowBox[{"fce", "\[GreaterEqual]", "0"}], "&&", 
+      RowBox[{"fdn", "\[GreaterEqual]", "0"}], "&&", 
+      RowBox[{"fen", "\[GreaterEqual]", "0"}]}]}], "\[IndentingNewLine]", 
+    "}"}], ",", 
+   RowBox[{"{", 
+    RowBox[{
+    "foa", ",", "fob", ",", "foc", ",", "fab", ",", "fad", ",", "fcd", ",", 
+     "fbe", ",", "fce", ",", " ", "fdn", ",", "fen"}], "}"}]}], 
+  "]"}]], "Input",
+ CellChangeTimes->{{3.571338129763956*^9, 3.571338132364458*^9}, {
+  3.571338169027062*^9, 3.571338464500936*^9}, {3.571358760114953*^9, 
+  3.571358762993438*^9}, {3.571358915160912*^9, 3.571358923480493*^9}, {
+  3.571359003853539*^9, 3.57135900514367*^9}, {3.571359258463065*^9, 
+  3.5713592896056004`*^9}, {3.5713595936565638`*^9, 3.571359594534629*^9}}],
+
+Cell[BoxData[
+ RowBox[{"{", 
+  RowBox[{"1", ",", 
+   RowBox[{"{", 
+    RowBox[{
+     RowBox[{"foa", "\[Rule]", "1"}], ",", 
+     RowBox[{"fob", "\[Rule]", "0"}], ",", 
+     RowBox[{"foc", "\[Rule]", "0"}], ",", 
+     RowBox[{"fab", "\[Rule]", "0"}], ",", 
+     RowBox[{"fad", "\[Rule]", "0"}], ",", 
+     RowBox[{"fcd", "\[Rule]", "2"}], ",", 
+     RowBox[{"fbe", "\[Rule]", "1"}], ",", 
+     RowBox[{"fce", "\[Rule]", "5"}], ",", 
+     RowBox[{"fdn", "\[Rule]", "1"}], ",", 
+     RowBox[{"fen", "\[Rule]", "0"}]}], "}"}]}], "}"}]], "Output",
+ CellChangeTimes->{3.571359310168486*^9, 3.571359594837804*^9}]
+}, Open  ]]
+},
+WindowSize->{740, 867},
+WindowMargins->{{197, Automatic}, {65, Automatic}},
+Magnification:>FEPrivate`If[
+  FEPrivate`Equal[FEPrivate`$VersionNumber, 6.], 1.5, 1.5 Inherited],
+FrontEndVersion->"8.0 for Linux x86 (64-bit) (October 10, 2011)",
+StyleDefinitions->"Default.nb"
+]
+(* End of Notebook Content *)
+
+(* Internal cache information *)
+(*CellTagsOutline
+CellTagsIndex->{}
+*)
+(*CellTagsIndex
+CellTagsIndex->{}
+*)
+(*NotebookFileOutline
+Notebook[{
+Cell[CellGroupData[{
+Cell[579, 22, 1980, 42, 341, "Input"],
+Cell[2562, 66, 606, 15, 71, "Output"]
+}, Open  ]]
+}
+]
+*)
+
+(* End of internal cache information *)
+

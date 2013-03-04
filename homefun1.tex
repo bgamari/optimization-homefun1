@@ -9,7 +9,7 @@
 \section{Question 1}
 
 We are given a network of nodes with edges $E = \{ oa, ob, oc, ab, ad, cd,
-be, dn, ed \}$, with maximum flow rates $c_e \forall e \in E$. We want
+be, ce, dn, en \}$, with maximum flow rates $c_e \forall e \in E$. We want
 to determine the direction and magnitude of the flow demanded of each
 edge such that the flow between $o$ and $n$ is maximized.
 
@@ -61,6 +61,27 @@ After solving our optimization problem,
 \[ \mathrm{min}_{\vec f'} ~ c \vec f' ~ \mathrm{s.t.} ~ A \vec f', \vec f' \ge 0 \]
 
 We can extract our flows $f_e = f'_e - c_e$.
+
+Mathematica tells us (where, e.g., {\tt foc} corresponds to $f'_{oc}$),
+
+\begin{lstlisting}
+In[11]:= Minimize[{
+  fdn + fen,
+  foa - fab - fad == 1
+   && fob + fab - fbe == -1
+   && foc - fcd - fce == -7
+   && fad + fcd - fdn == 1
+   && fbe + fce - fen == 6
+   && foa >= 0 && fob >= 0 && foc >= 0
+   && fab >= 0 && fad >= 0 && fcd >= 0
+   && fbe >= 0 && fce >= 0 && fdn >= 0 && fen >= 0
+  }, {foa, fob, foc, fab, fad, fcd, fbe, fce, fdn, fen}]
+
+Out[11]= {1, {foa -> 1, fob -> 0, foc -> 0, fab -> 0, fad -> 0, 
+  fcd -> 2, fbe -> 1, fce -> 5, fdn -> 1, fen -> 0}}
+\end{lstlisting}
+
+Resulting in a bandwidth of 5 units.
 
 \section{Question 2}
 
