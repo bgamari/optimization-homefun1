@@ -32,6 +32,14 @@ backtrackingSearch :: (Num a, Ord a, Metric f)
 backtrackingSearch gamma c f df p x =
     head $ dropWhile (not . armijo c f df x p) $ iterate (*gamma) c
 
+-- | Line search by Newton's method
+newtonSearch :: (Num a) => LineSearch f a
+newtonSearch f df p x = undefined
+
+-- | Line search by secant method with given tolerance
+secantSearch :: (Num a, Fractional a) => a -> LineSearch f a
+secantSearch eps f df p x = undefined
+
 -- | Constant line search
 constantSearch :: a -> LineSearch f a
 constantSearch c f df p x = c
