@@ -103,6 +103,13 @@ bicInv :: (Functor m, Distributive m, Additive m,
        => a -> m (m a) -> [m (m a)]
 bicInv alpha a = bicInv' (alpha *!! adjoint a) a
 
+-- | 'secant f x0 x1' is the series of secant method approximations of
+-- a root of 'f' surrounded by starting points 'x0' and 'x1'
+secant :: (Num a, Fractional a) => (a -> a) -> a -> a -> [a]
+secant f = curry go
+  where go (x0, x1) = let x2 = x1 - f x1 * (x1 - x0) / (f x1 - f x0)
+                      in x2 : go (x1, x2)
+
 -- | Newton's method
 newton :: (Num a, Ord a, Additive f, Metric f)
        => (f a -> a) -> (f a -> f a) -> (f a -> f (f a)) -> f a -> [f a]
