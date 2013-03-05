@@ -49,9 +49,10 @@ gradientDescent search f df x0 = iterate go x0
 -- direction 'p' for iteration 'k', 'df1' for iteration 'k+1'
 type Beta f a = f a -> f a -> f a -> a
 
--- | Conjugate gradient method with given beta
+-- | Conjugate gradient method with given beta and line search method
 conjGrad :: (Num a, RealFloat a, Additive f, Metric f)
-         => LineSearch f a -> Beta f a -> (f a -> a) -> (f a -> f a) -> f a -> [f a]
+         => LineSearch f a -> Beta f a
+         -> (f a -> a) -> (f a -> f a) -> f a -> [f a]
 conjGrad search beta f df x0 = go (negated $ df x0) x0
   where go p x = let a = search f df p x
                      x' = x ^+^ a *^ p
@@ -69,7 +70,8 @@ polakRibiere df0 df1 p0 = df1 `dot` (df1 ^-^ df0) / norm df0
 
 -- | Hestenes-Stiefel expression for beta
 hestenesStiefel :: (Num a, RealFloat a, Metric f) => Beta f a
-hestenesStiefel df0 df1 p0 = - (df1 `dot` (df1 ^-^ df0)) / (p0 `dot` (df1 ^-^ df0))
+hestenesStiefel df0 df1 p0 =
+    - (df1 `dot` (df1 ^-^ df0)) / (p0 `dot` (df1 ^-^ df0))
 
 -- | Moore-Penrose pseudo-inverse
 pseudoInverse :: (Functor m, Distributive n, Conjugate a)
@@ -130,5 +132,6 @@ main = do
 
      putStrLn "\n\nNewton"
      --let ddfInv = head . take 100 . bicInv 0.1 . hessian rosenbrock
-     let ddfInv = maybe (error "Can't invert Hessian") id . inv22 . hessian rosenbrock
+     let ddfInv = maybe (error "Can't invert Hessian") id
+                  . inv22 . hessian rosenbrock
      forM_ (take 100 $ newton f df ddfInv x0) $ \x->do print (x, f x)
