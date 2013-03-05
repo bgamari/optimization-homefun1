@@ -102,12 +102,6 @@ bicInv :: (Functor m, Distributive m, Additive m,
            Applicative m, Apply m, Foldable m, Conjugate a)
        => a -> m (m a) -> [m (m a)]
 bicInv alpha a = bicInv' (alpha *!! adjoint a) a
-       
--- | Entry-wise matrix subtraction
-(!-!) :: (Applicative m, Additive n, Num a)
-      => m (n a) -> m (n a) -> m (n a)
-a !-! b = (^-^) <$> a <*> b
-infixl 6 !-!
 
 -- | Newton's method
 newton :: (Num a, Ord a, Additive f, Metric f)
