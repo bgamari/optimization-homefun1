@@ -131,7 +131,6 @@ main = do
      forM_ (take 100 $ gradientDescent search f df x0) $ \x->do print (x, f x)
 
      putStrLn "\n\nNewton"
-     --let ddfInv = head . take 100 . bicInv 0.1 . hessian rosenbrock
      let ddfInv = maybe (error "Can't invert Hessian") id
                   . inv22 . hessian rosenbrock
      forM_ (take 100 $ newton f df ddfInv x0) $ \x->do print (x, f x)
