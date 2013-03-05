@@ -54,10 +54,9 @@ fletcherReeves search f df x0 = go (negated $ df x0) x0
                      d' = negated (df x') ^+^ b *^ d
                  in x' : go d' x'
 
--- | Penrose-Moore pseudo-inverse
+-- | Moore-Penrose pseudo-inverse
 pseudoInverse :: (Functor m, Distributive n, Conjugate a)
               => m (n a) -> m (n a)
-              
 pseudoInverse a = undefined
 
 -- | Inverse by iterative method of Ben-Israel and Cohen
@@ -115,5 +114,4 @@ main = do
      putStrLn "\n\nNewton"
      --let ddfInv = head . take 100 . bicInv 0.1 . hessian rosenbrock
      let ddfInv = maybe (error "Can't invert Hessian") id . inv22 . hessian rosenbrock
-     print $ ddfInv x0
      forM_ (take 100 $ newton f df ddfInv x0) $ \x->do print (x, f x)
