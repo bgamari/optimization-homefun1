@@ -45,7 +45,8 @@ gradientDescent search f df x0 = iterate go x0
                in x ^+^ a *^ p
                 
 -- | A beta expression 'beta df0 df1 p' is an expression for the
--- conjugate direction contribution
+-- conjugate direction contribution given the derivative 'df0' and
+-- direction 'p' for iteration 'k', 'df1' for iteration 'k+1'
 type Beta f a = f a -> f a -> f a -> a
 
 -- | Conjugate gradient method with given beta
