@@ -45,10 +45,14 @@ gradientDescent search f df x0 = iterate go x0
                in x ^+^ a *^ p
                 
 -- | Fletcher-Reeves non-linear conjugate gradient method
-fletcherReeves :: (Traversable f, Num a)
-               => LineSearch f a -> (f a -> a) -> (f a -> a) -> a -> [a]
-fletcherReeves f f' = go
-  where go = undefined
+fletcherReeves :: (Num a, RealFloat a, Additive f, Metric f)
+               => LineSearch f a -> (f a -> a) -> (f a -> f a) -> f a -> [f a]
+fletcherReeves search f df x0 = go (negated $ df x0) x0
+  where go d x = let a = search f df d x
+                     x' = x ^+^ a *^ d
+                     b = norm (df x') / norm (df x)
+                     d' = negated (df x') ^+^ b *^ d
+                 in x' : go d' x'
 
 -- | Penrose-Moore pseudo-inverse
 pseudoInverse :: (Functor m, Distributive n, Conjugate a)
@@ -101,11 +105,15 @@ main = do
          x0 = V2 0.01 2.8
          --x0 = V2 0 3
          --x0 = V2 0.9 0.9
-     --let search = backtrackingSearch 0.1 0.2
-     --forM_ (fletcherReeves backtrackingSearch f df x0) $ \x->do print (x, f x)
-     --forM_ (take 10000 $ gradientDescent search f df x0) $ \x->do print (x, f x)
+     let search = backtrackingSearch 0.1 0.2
+     putStrLn "\n\nFletcher-Reeves"
+     forM_ (take 100 $ fletcherReeves search f df x0) $ \x->do print (x, f x)
 
+     putStrLn "\n\nSteepest descent"
+     forM_ (take 100 $ gradientDescent search f df x0) $ \x->do print (x, f x)
+
+     putStrLn "\n\nNewton"
      --let ddfInv = head . take 100 . bicInv 0.1 . hessian rosenbrock
      let ddfInv = maybe (error "Can't invert Hessian") id . inv22 . hessian rosenbrock
      print $ ddfInv x0
-     forM_ (take 10000 $ newton f df ddfInv x0) $ \x->do print (x, f x)
+     forM_ (take 100 $ newton f df ddfInv x0) $ \x->do print (x, f x)
