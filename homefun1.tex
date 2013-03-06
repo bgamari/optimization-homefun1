@@ -4,7 +4,11 @@
 \usepackage{graphicx}
 \usepackage{amsmath}
 
+\title{Homefun 1}
+\author{Ben Gamari}
+
 \begin{document}
+\maketitle
 
 \section{Question 1}
 
@@ -77,7 +81,7 @@ In[11]:= Minimize[{
    && fbe >= 0 && fce >= 0 && fdn >= 0 && fen >= 0
   }, {foa, fob, foc, fab, fad, fcd, fbe, fce, fdn, fen}]
 
-Out[11]= {1, {foa -> 1, fob -> 0, foc -> 0, fab -> 0, fad -> 0, 
+Out[11]= {1, {foa -> 1, fob -> 0, foc -> 0, fab -> 0, fad -> 0,
   fcd -> 2, fbe -> 1, fce -> 5, fdn -> 1, fen -> 0}}
 \end{lstlisting}
 
@@ -202,6 +206,11 @@ underdetermined system is shown in Figure \ref{Fig:AltProjConv}.
   \label{Fig:Q4Convergence}
 \end{figure}
 
+\lstinputlisting[language=Python]{q3.py}
+
 \section{Question 5}
+
+\lstinputlisting[language=Haskell]{q5.hs}
+
 
 \end{document}
