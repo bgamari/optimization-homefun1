@@ -1,40 +1,46 @@
 #!/usr/bin/python
 
 import numpy as np
+from numpy import dot
+from numpy.linalg import norm
 
 def generate_sys(neq, nvar):
     """ Generate a linear system """
     A = np.random.randn(neq, nvar)
-    A = np.dot(A.T, A)
+    A = dot(A.T, A)
     assert(np.all(np.linalg.eigvals(A) > 0))
     b = np.random.randn(neq)
     return (A,b)
 
-A,b = generate_sys(10,10)
+n = 10
+A,b = generate_sys(n,n)
+print 'condition number', np.linalg.cond(A)
+x0 = np.random.randn(n)
+print 'start', x0
 
 def gradient_descent_step(A, b, x):
     """ Steepest descent step for linear system """
-    r = b - np.dot(A, x)
-    t = np.dot(r,r) / np.dot(r, np.dot(A, r))
+    r = b - dot(A, x)
+    t = dot(r,r) / dot(r, dot(A, r))
     x = x + t*r
     return x
 
-def conj_gradient(A, b, x0, niter=50, eps=1e-10):
-    """ Conjugate gradient step for linear system """
+def conj_gradient(A, b, x0, niter=50, eps=1e-12):
+    """ Conjugate gradient for linear system """
     x = x0
-    r = b - np.dot(A, x0)
-    d = r
+    r = b - dot(A, x0)
+    p = r
     resids = []
     for i in range(niter):
-        a = np.dot(r, d) / np.dot(d, np.dot(A, d))
-        x = x + a*d
+        a = dot(r,r) / dot(p, dot(A, p))
+        x = x + a*p
         r_old = r
-        r = r - np.dot(a, np.dot(A, d))
-        b = np.dot(r, r) / np.dot(r_old, r_old)
-        d = r + b*d
+        r = r - a*dot(A, p)
+        beta = dot(r,r) / dot(r_old,r_old)
+        p = r + beta*p
 
-        resids.append(np.linalg.norm(np.dot(A, x) - b))
-        if np.linalg.norm(r) < eps:
+        resids.append(norm(dot(A, x) - b))
+        if norm(r) < eps:
             print 'Converged after %d iterations' % i
             break
 
@@ -43,16 +49,17 @@ def conj_gradient(A, b, x0, niter=50, eps=1e-10):
 def newton(A, b, x):
     """ Newton's method for linear system """
     pass
-    #return x - 
-    
-x0 = np.random.randn(10)
-x = x0
+    #return x -
+
+x = x0.copy()
 gd_resids = []
 for i in range(50):
     x = gradient_descent_step(A, b, x)
-    gd_resids.append(np.linalg.norm(np.dot(A, x) - b))
+    gd_resids.append(norm(dot(A, x) - b))
+print 'gradient descent', x
 
-_,cg_resids = conj_gradient(A, b, x0, eps=0)
+x,cg_resids = conj_gradient(A, b, x0)
+print 'conjugate gradient', x
 
 from matplotlib import pyplot as pl
 pl.plot(gd_resids, label='steepest descent')
@@ -62,4 +69,3 @@ pl.yscale('log')
 pl.xlabel('iteration')
 pl.ylabel('residual')
 pl.savefig('q4-convergence.pdf')
-
