@@ -12,12 +12,6 @@ def generate_sys(neq, nvar):
     b = np.random.randn(neq)
     return (A,b)
 
-n = 10
-A,b = generate_sys(n,n)
-print 'condition number', np.linalg.cond(A)
-x0 = np.random.randn(n)
-print 'start', x0
-
 def gradient_descent_step(A, b, x):
     """ Steepest descent step for linear system """
     r = b - dot(A, x)
@@ -46,25 +40,41 @@ def conj_gradient(A, b, x0, niter=50, eps=1e-12):
 
     return x, resids
 
-def newton(A, b, x):
+def newton_step(A, b, x):
     """ Newton's method for linear system """
-    pass
-    #return x -
+    return x - dot(np.linalg.inv(A), dot(A, x) - b)
 
-x = x0.copy()
-gd_resids = []
-for i in range(50):
-    x = gradient_descent_step(A, b, x)
-    gd_resids.append(norm(dot(A, x) - b))
-print 'gradient descent', x
-
-x,cg_resids = conj_gradient(A, b, x0)
-print 'conjugate gradient', x
 
 from matplotlib import pyplot as pl
-pl.plot(gd_resids, label='steepest descent')
-pl.plot(cg_resids, label='conj. gradient')
-pl.legend()
+for i in range(100):
+    n = 10
+    A,b = generate_sys(n,n)
+    print 'condition number', np.linalg.cond(A)
+    x0 = np.random.randn(n)
+    print 'start', x0
+
+    x = x0.copy()
+    gd_resids = []
+    for i in range(50):
+        gd_resids.append(norm(dot(A, x) - b))
+        x = gradient_descent_step(A, b, x)
+    print 'gradient descent', x
+
+    x = x0.copy()
+    newton_resids = []
+    for i in range(50):
+        newton_resids.append(norm(dot(A, x) - b))
+        x = newton_step(A, b, x)
+    print 'newton', x
+
+    x,cg_resids = conj_gradient(A, b, x0, eps=0)
+    print 'conjugate gradient', x
+
+    pl.plot(gd_resids, '+', label='steepest descent', c='r')
+    pl.plot(cg_resids, '+', label='conj. gradient', c='g')
+    pl.plot(newton_resids, '+', label='newton', c='b')
+
+pl.legend([])
 pl.yscale('log')
 pl.xlabel('iteration')
 pl.ylabel('residual')
