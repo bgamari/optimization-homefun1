@@ -193,11 +193,21 @@ underdetermined system is shown in Figure \ref{Fig:AltProjConv}.
 
 \section{Question 4}
 
-\begin{figure}
-  \lstinputlisting[language=Python]{q4.py}
-  \caption{(Question 4) Implementation of three linear optimization methods in Python.}
-  \label{Fig:Q4}
-\end{figure}
+Otherwise, we'd expect that the random systems we generate will likely
+be poorly conditioned, giving conjugate gradient a distinct advantage
+over steepest descent. While Newton's method requires inversion of $A$,
+it should converge extremely quickly in the case of our linear problem.
+
+Figure \ref{Fig:Q4Convergence} shows convergence of these three methods on
+a randomly generated linear system of 10 equations and 10
+variables. The observed convergence characteristics agree with the
+intuition stated about. We find that Newton's method convergences
+nearly immediately down to machine precision while conjugate gradient
+requires ten iterations, exactly enough to cover the 10 dimensions of
+the system once, before reaching convergence. As expected, steepest
+descent is crippled by the poor conditioning of the system.
+
+\lstinputlisting[language=Python]{q4.py}
 
 \begin{figure}
   \center
@@ -205,8 +215,6 @@ underdetermined system is shown in Figure \ref{Fig:AltProjConv}.
   \caption{(Question 4) Convergence of methods on 10 equation, 10 variable linear system}
   \label{Fig:Q4Convergence}
 \end{figure}
-
-\lstinputlisting[language=Python]{q3.py}
 
 \section{Question 5}
 
