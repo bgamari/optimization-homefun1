@@ -123,6 +123,16 @@ newton :: (Num a, Ord a, Additive f, Metric f)
 newton f df ddfInv x0 = iterate go x0
   where go x = x ^-^ ddfInv x !* df x
 
+-- | Barzilai-Borwein 1988 is a non-monotonic optimization method
+barzilaiBorwein :: (Additive f, Metric f, Functor f, Fractional a)
+                => (f a -> a) -> (f a -> f a) -> f a -> f a -> [f a]
+barzilaiBorwein f df x0 x1 = go (x0, x1)
+  where go (x0,x1) = let s = x1 ^-^ x0
+                         z = df x1 ^-^ df x0
+                         alpha = (s `dot` z) / (z `dot` z)
+                         x2 = x1 ^-^ alpha *^ df x1
+                     in x2 : go (x1, x2)
+
 -- | Convert a nested-functor matrix to an hmatrix Matrix
 toHMatrix :: (Functor m, Foldable m, Foldable n, LA.Element a)
           => m (n a) -> LA.Matrix a
