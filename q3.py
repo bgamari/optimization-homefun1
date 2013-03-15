@@ -29,7 +29,7 @@ def proj_x_to_m(obs, x):
 obs = observations(10, 100)
 m = obs.filled(0)
 err = []
-for i in range(100):
+for i in range(1000):
     x = proj_m_to_x(m)
     new_m = proj_x_to_m(obs, x)
     e = np.sum((m - new_m)**2)
@@ -40,6 +40,7 @@ for i in range(100):
 
 import matplotlib.pyplot as pl
 pl.plot(err)
+pl.yscale('log')
 pl.xlabel('iteration')
 pl.ylabel('Froebenius norm')
 pl.savefig('q3-convergence.pdf')
