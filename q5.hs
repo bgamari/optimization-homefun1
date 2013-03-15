@@ -1,21 +1,22 @@
-import Data.Foldable (Foldable)
+import           Data.Foldable (Foldable)
 import qualified Data.Foldable as F
-import Data.Traversable
-import Data.Distributive (Distributive)
-import Data.Functor.Bind (Apply)
-import Control.Applicative
-import Control.Monad
-import Numeric.AD hiding (gradientDescent)
-import Numeric.AD.Types (auto)
+import           Data.Traversable
+import           Data.Distributive (Distributive)
+import           Data.Functor.Bind (Apply)
+import           Control.Applicative
+import           Control.Monad
+import           Numeric.AD hiding (gradientDescent)
+import           Numeric.AD.Types (auto)
 import qualified Numeric.LinearAlgebra as LA
-import Linear
+import           Linear
 
-import Graphics.Rendering.Chart
-import Graphics.Rendering.Chart.Axis.Floating
-import Data.Accessor
-import Data.Colour
-import Data.Colour.Names
-import Numeric
+import           Data.Accessor
+import           Data.Colour
+import           Data.Colour.Names
+import           Debug.Trace
+import           Graphics.Rendering.Chart
+import           Graphics.Rendering.Chart.Axis.Floating
+import           Numeric
 
 -- | A 'LineSearch' method 'search f df p x' determines a step size
 -- in direction 'p' from point 'x' for function 'f' with gradient 'df'
@@ -164,11 +165,6 @@ quadratic a b c
                   , (-b - sqrt discr) / 2 / a ]
   where discr = b^2 - 4*a*c
 
--- | Convert a nested-functor matrix to an hmatrix Matrix
-toHMatrix :: (Functor m, Foldable m, Foldable n, LA.Element a)
-          => m (n a) -> LA.Matrix a
-toHMatrix = LA.fromLists . F.toList . fmap F.toList
-
 -- | Rosenbrock function
 rosenbrock :: Num a => V2 a -> a
 rosenbrock (V2 x y) = (1-x)^2 + 100*(y-x^2)^2
@@ -178,50 +174,49 @@ main = do
      let f = rosenbrock
          df = grad rosenbrock :: V2 Double -> V2 Double
          x0 = V2 0.01 2.8
-         --x0 = V2 0 3
-         --x0 = V2 0.9 0.9
+     --forM_ (fista 2000 f df x0) $ \x->do print (x, f x)
+     --forM_ (barzilaiBorwein f df x0 (x0^+^V2 1 1)) $ \x->do print (x, f x)
+
      let search = backtrackingSearch 0.1 0.2
-     putStrLn "\n\nConjugate gradient"
-     forM_ (take 10 $ conjGrad search fletcherReeves f df x0) $ \x->do print (x, f x)
-
-     putStrLn "\n\nSteepest descent"
-     forM_ (take 10 $ gradientDescent search f df x0) $ \x->do print (x, f x)
-
-     putStrLn "\n\nNewton"
-     let ddfInv = maybe (error "Can't invert Hessian") id
-                  . inv22 . hessian rosenbrock
-     forM_ (take 10 $ newton f df ddfInv x0) $ \x->do print (x, f x)
-
      let x0s = [ V2 0.01 2.8, V2 0 3, V2 0.9 0.9 ]
          logAxis = autoScaledLogAxis $ loga_labelf ^= (\x->showFFloat (Just 2) (log x) "") $ defaultLogAxis
-         layout = layout1_plots ^= (map (Left . toPlot) $ plot search fletcherReeves x0s)
-                  $ layout1_left_axis ^: laxis_generate ^= logAxis
-                  $ defaultLayout1
-     renderableToPDFFile (toRenderable layout) 600 600 "q5.pdf"
+         layoutError = withAnyOrdinate
+                     $ layout1_plots ^= ( map (Left . toPlot)
+                                        $ plot search fletcherReeves x0s (V2 1 1 `qd`))
+                     $ layout1_left_axis ^: laxis_generate ^= logAxis
+                     $ layout1_left_axis ^: laxis_title ^= "log error"
+                     $ defaultLayout1
+         layoutValue = withAnyOrdinate
+                     $ layout1_plots ^= ( map (Left . toPlot)
+                                        $ plot search fletcherReeves x0s rosenbrock)
+                     $ layout1_left_axis ^: laxis_title ^= "f(x)"
+                     -- $ layout1_left_axis ^: laxis_generate ^= logAxis
+                     $ defaultLayout1
+     renderableToPDFFile (renderLayout1sStacked [layoutError, layoutValue]) 600 600 "q5.pdf"
 
-plotValue :: [V2 Double] -> PlotLines Int Double
-plotValue xs =
-    plot_lines_values ^= [take 50 $ zip [1..] $ map rosenbrock xs]
-    $ defaultPlotLines
-
-plotError :: V2 Double -> [V2 Double] -> PlotLines Int Double
-plotError x xs =
-    plot_lines_values ^= [take 50 $ zip [1..] $ map (x `qd`) xs]
-    $ defaultPlotLines
-
-plot :: LineSearch V2 Double -> Beta V2 Double -> [V2 Double] -> [PlotLines Int Double]
-plot search beta x0s =
+plot :: LineSearch V2 Double -> Beta V2 Double -> [V2 Double]
+     -> (V2 Double -> Double) -> [PlotLines Int Double]
+plot search beta x0s plotFunc =
     let f = rosenbrock
         df = grad rosenbrock :: V2 Double -> V2 Double
         ddfInv = maybe (error "Can't invert Hessian") id
                  . inv22 . hessian rosenbrock
         showV2 (V2 x y) = "("++show x++","++show y++")"
-        cg = map (\x0->("conj. grad. "++showV2 x0, blue, conjGrad search beta f df x0)) x0s
-        gd = map (\x0->("grad. desc. "++showV2 x0, green, gradientDescent search f df x0)) x0s
-        n  = map (\x0->("newton "++showV2 x0, red, newton f df ddfInv x0)) x0s
+        darknesses = [0.1, 0.5, 0.9] :: [Double]
+        cg = zipWith (\x0 d->( "conj. grad. "++showV2 x0, darken d blue
+                             , conjGrad search beta f df x0)
+                     ) x0s darknesses
+        gd = zipWith (\x0 d->( "grad. desc. "++showV2 x0, darken d green
+                             , gradientDescent search f df x0)
+                     ) x0s darknesses
+        n  = zipWith (\x0 d->( "newton "++showV2 x0, darken d red
+                             , newton f df ddfInv x0)
+                     ) x0s darknesses
         errorPlots = map (\(title,color,xs) ->
                              plot_lines_title ^= title
                              $ plot_lines_style ^: line_color ^= opaque color
-                             $ plotError (V2 1 1) $ take 50 xs
+                             $ plot_lines_values ^=
+                                   [zip [1..] $ filter (/=0) $ map plotFunc $ take 50 xs]
+                             $ defaultPlotLines
                          ) $ concat [cg, gd, n]
     in errorPlots
