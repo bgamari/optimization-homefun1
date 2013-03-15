@@ -3,6 +3,7 @@
 \usepackage{listings}
 \usepackage{graphicx}
 \usepackage{amsmath}
+\usepackage{url}
 
 \title{Homefun 1}
 \author{Ben Gamari}
@@ -173,15 +174,9 @@ letting $\omega_i = 0$ for all negative eigenvalues $\lambda_i <
 For (b), we speculate that the minimal norm projection from $X$ to a
 valid completion $M$ is $X$ with the observed entries placed.
 
-This has been implemented in Python (see Figure
-\ref{Fig:AltProj}). Convergence characteristics for a small,
+This has been implemented in Python (see Section
+\ref{Q3Source}). Convergence characteristics for a small,
 underdetermined system is shown in Figure \ref{Fig:AltProjConv}.
-
-\begin{figure}
-  \lstinputlisting[language=Python]{q3.py}
-  \caption{(Question 3) Implementation of method of alternating projections in Python.}
-  \label{Fig:AltProj}
-\end{figure}
 
 \begin{figure}
   \center
@@ -207,7 +202,8 @@ requires ten iterations, exactly enough to cover the 10 dimensions of
 the system once, before reaching convergence. As expected, steepest
 descent is crippled by the poor conditioning of the system.
 
-\lstinputlisting[language=Python]{q4.py}
+The source for the implementation of this method is given in Section
+\ref{Q4Source}.
 
 \begin{figure}
   \center
@@ -218,7 +214,30 @@ descent is crippled by the poor conditioning of the system.
 
 \section{Question 5}
 
-\lstinputlisting[language=Haskell]{q5.hs}
+Convergence for the three methods on the Rosenbrock function is shown
+in Figure \ref{Fig:Q5Convergence}. The source is given in Section
+\ref{Q5Source}.
 
+Since originally writing this exercise, I have refactored it into a
+library available on Github. It can be found at
+\url{https://github.com/bgamari/optimization}.
+
+\begin{figure}
+  \center
+  \includegraphics[scale=0.5]{q5.pdf}
+  \caption{(Question 5) Convergence of methods Rosenbrock function up to 50 iterations}
+  \label{Fig:Q5Convergence}
+\end{figure}
+
+\appendix
+
+\section{Question 3 source}\label{Q3Source}
+\lstinputlisting[language=Python]{q3.py}
+
+\section{Question 4 source}\label{Q4Source}
+\lstinputlisting[language=Python]{q4.py}
+
+\section{Question 5 source}\label{Q5Source}
+\lstinputlisting[language=Haskell]{q5.hs}
 
 \end{document}
