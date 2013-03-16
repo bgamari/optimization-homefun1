@@ -188,17 +188,18 @@ underdetermined system is shown in Figure \ref{Fig:AltProjConv}.
 
 \section{Question 4}
 
-Otherwise, we'd expect that the random systems we generate will likely
-be poorly conditioned, giving conjugate gradient a distinct advantage
-over steepest descent. While Newton's method requires inversion of $A$,
-it should converge extremely quickly in the case of our linear problem.
+We expect that the random systems we generate will likely be poorly
+conditioned, giving conjugate gradient a distinct advantage over
+steepest descent. While Newton's method requires inversion of $A$, it
+should converge extremely quickly in the case of our linear problem as
+its linear model of the function fits its behavior perfectly.
 
 Figure \ref{Fig:Q4Convergence} shows convergence of these three methods on
-a randomly generated linear system of 10 equations and 10
+a randomly generated linear system of ten equations and ten
 variables. The observed convergence characteristics agree with the
 intuition stated about. We find that Newton's method convergences
 nearly immediately down to machine precision while conjugate gradient
-requires ten iterations, exactly enough to cover the 10 dimensions of
+requires ten iterations, exactly enough to cover the ten dimensions of
 the system once, before reaching convergence. As expected, steepest
 descent is crippled by the poor conditioning of the system.
 
@@ -216,7 +217,12 @@ The source for the implementation of this method is given in Section
 
 Convergence for the three methods on the Rosenbrock function is shown
 in Figure \ref{Fig:Q5Convergence}. The source is given in Section
-\ref{Q5Source}.
+\ref{Q5Source}. We find that Newton's method quickly converges, as
+expected. Steepest descent is slowest as it gets stuck traversing
+across the function's valley as it approaching the minimum. Conjugate
+gradient avoids this and converges more quickly, although it's
+interesting to note that the error decreases in sudden jumps after
+around 16 and 32 iterations.
 
 Since originally writing this exercise, I have refactored it into a
 library available on Github. It can be found at
